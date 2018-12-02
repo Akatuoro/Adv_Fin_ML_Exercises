@@ -663,7 +663,7 @@ def featImpMDA(clf,X,y,cv,sample_weight,t1,pctEmbargo,scoring='neg_log_loss'):
         raise ValueError('wrong scoring method.')
     from sklearn.metrics import log_loss, accuracy_score
     cvGen=PurgedKFold(n_splits=cv,t1=t1,pctEmbargo=pctEmbargo) # purged cv
-    scr0,scr1=pd.SEries(), pd.DataFrame(columns=X.columns)
+    scr0,scr1=pd.Series(), pd.DataFrame(columns=X.columns)
 
     for i,(train,test) in enumerate(cvGen.split(X=X)):
         X0,y0,w0=X.iloc[train,:],y.iloc[train],sample_weight.iloc[train]
@@ -747,10 +747,10 @@ def orthoFeats(dfx,varThres=0.95):
 #=======================================================
 # 8.7 Creating a Synthetic Dataset
 
-def getTestData(n_features=40,n_informative=10,n_redundant=10,n_samples=10_000):
+def getTestData(n_features=40,n_informative=10,n_redundant=10,n_samples=10000):
     # generate a random dataset for a classification problem
     from sklearn.datasets import make_classification
-    kwds=dict(n_samples=n_samples,n_features=n_feautres,
+    kwds=dict(n_samples=n_samples,n_features=n_features,
               n_informative=n_informative,n_redundant=n_redundant,
               random_state=0,shuffle=False)
     trnsX,cont=make_classification(**kwds)
@@ -798,7 +798,7 @@ def featImportances(trnsX,cont,n_estimators=1000,cv=10,
         oos=cvScore(clf,X=trnsX,y=cont['bin'],sample_weight=cont['w'],
                     scoring=scoring,cvGen=cvGen).mean()
         clf.n_jobs=1 # parallelize auxFeatImpSFI rather than clf
-        imp=pmPandasObj(auxFeatImpSFI,('featNames',trnsX.columns),numThreads,
+        imp=mpPandasObj(auxFeatImpSFI,('featNames',trnsX.columns),numThreads,
                         clf=clf,trnsX=trnsX,cont=cont,scoring=scoring,cvGen=cvGen)
     return imp,oob,oos
 
