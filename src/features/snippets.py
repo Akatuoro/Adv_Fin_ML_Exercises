@@ -677,16 +677,16 @@ def featImpMDA(clf,X,y,cv,sample_weight,t1,pctEmbargo,scoring='neg_log_loss'):
             pred=fit.predict(X1)
             scr0.loc[i]=accuracy_score(y1,pred,sample_weight=w1.values)
 
-    for j in X.columns:
-        X1_=X1.copy(deep=True)
-        np.random.shuffle(X1_[j].values) # permutation of a single column
-        if scoring=='neg_log_loss':
-            prob=fit.predict_proba(X1_)
-            scr1.loc[i,j]=-log_loss(y1,prob,sample_weight=w1.values,
-                                    labels=clf.classes_)
-        else:
-            pred=fit.predict(X1_)
-            scr1.loc[i,j]=accuracy_score(y1,pred,sample_weight=w1.values)
+        for j in X.columns:
+            X1_=X1.copy(deep=True)
+            np.random.shuffle(X1_[j].values) # permutation of a single column
+            if scoring=='neg_log_loss':
+                prob=fit.predict_proba(X1_)
+                scr1.loc[i,j]=-log_loss(y1,prob,sample_weight=w1.values,
+                                        labels=clf.classes_)
+            else:
+                pred=fit.predict(X1_)
+                scr1.loc[i,j]=accuracy_score(y1,pred,sample_weight=w1.values)
     imp=(-scr1).add(scr0,axis=0)
     if scoring=='neg_log_loss':imp=imp/-scr1
     else: imp=imp/(1.-scr1)
